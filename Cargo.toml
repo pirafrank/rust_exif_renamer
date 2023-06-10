@@ -1,0 +1,10 @@
+[package]
+name = "exif_renamer"
+authors = ["Francesco Pira (pirafrank)"]
+version = "0.1.0"
+edition = "2021"
+#repository = "https://github.com/pirafrank/ducks"
+
+[dependencies]
+chrono = "0.4"
+kamadak-exif = "0.5.5"
