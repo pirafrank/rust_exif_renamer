@@ -10,3 +10,4 @@ chrono = "0.4"
 kamadak-exif = "0.5.5"
 rayon = "1.7.0"
 clap = { version = "4.4", features = ["derive"] }
+little_exif = "0.6.3"

@@ -1,15 +1,22 @@
 use std::ffi::OsStr;
 use std::path::Path;
 use chrono::{DateTime, NaiveDateTime, Local, TimeZone};
+use little_exif::metadata::Metadata;
+use little_exif::exif_tag::ExifTag;
+use crate::exif_error::ExifError;
 
-fn create_datetime_from_string(date_string: &str) -> Option<DateTime<Local>> {
-    let format = "%Y-%m-%d %H:%M:%S";
+fn create_datetime_from_pattern(date_string: &str, format: &str) -> Option<DateTime<Local>> {
     let parsed_date = NaiveDateTime::parse_from_str(date_string, format);
 
     match parsed_date {
         Ok(parsed) => Some(Local.from_local_datetime(&parsed).single().unwrap()),
         Err(_) => None,
     }
+}
+
+fn create_datetime_from_string(date_string: &str) -> Option<DateTime<Local>> {
+    let format = "%Y-%m-%d %H:%M:%S";
+    create_datetime_from_pattern(date_string, format)
 }
 
 fn format_date(date: DateTime<Local>, pattern: &str) -> String {
@@ -49,7 +56,36 @@ pub fn exif_to_filename(path: &Path, pattern: &str, extension: &OsStr) {
   }
 }
 
-pub fn filename_to_exif(path: &Path) {
-    // TODO: Implement the logic to extract date from filename and update EXIF data
-    println!("Processing file: {:?} (filename to EXIF)", path);
+pub fn filename_to_exif(path: &Path, pattern: &str) {
+    if let Err(err) = process_exif(path, pattern) {
+        match err {
+            ExifError::DateParseError(msg) => println!("Date parsing error: {}", msg),
+            ExifError::FileError(err) => println!("File error: {}", err),
+            ExifError::ExifError(err) => println!("EXIF error: {}", err),
+        }
+    }
+}
+
+fn process_exif(path: &Path, pattern: &str) -> Result<(), ExifError> {
+    let format: &str = "%Y:%m:%d %H:%M:%S";
+    let stem: &str = path.file_stem()
+        .and_then(|s| s.to_str())
+        .ok_or_else(|| ExifError::DateParseError("Invalid filename".to_string()))?;
+
+    let date_time = create_datetime_from_pattern(&stem, pattern)
+        .ok_or_else(|| ExifError::DateParseError(format!("Invalid date format in: {}", stem)))?;
+
+    let formatted_date = date_time.format(&format).to_string();
+    println!("Formatted date {}, from filename: {}", formatted_date, stem);
+    
+    let mut metadata = Metadata::new_from_path(&path)
+        .map_err(|e| ExifError::ExifError(exif::Error::Io(e)))?;
+
+    metadata.set_tag(ExifTag::DateTimeOriginal(formatted_date));
+
+    metadata.write_to_file(&path)
+        .map_err(|e| ExifError::ExifError(exif::Error::Io(e)))?;
+
+    println!("Updated EXIF data for file {}", path.display());
+    Ok(())
 }
