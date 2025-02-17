@@ -24,4 +24,10 @@ target/
 **/*.rs.patch
 
 # test assets
-test_assets
+test_assets/exif-to-name/*.jpg
+test_assets/exif-to-name/*.jpeg
+test_assets/name-to-exif/*.jpg
+test_assets/name-to-exif/*.jpeg
+*.log
+*.jpg
+*.jpeg
