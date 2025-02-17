@@ -26,7 +26,7 @@ fn rename_file(formatted_date: &str, path: &Path, extension: &OsStr) {
     }
 }
 
-pub fn process_image_file(path: &Path, pattern: &str, extension: &OsStr) {
+pub fn exif_to_filename(path: &Path, pattern: &str, extension: &OsStr) {
   if let Ok(filex) = std::fs::File::open(&path) {
       let mut bufreader = std::io::BufReader::new(&filex);
       let exifreader = exif::Reader::new();
@@ -47,4 +47,9 @@ pub fn process_image_file(path: &Path, pattern: &str, extension: &OsStr) {
           println!("");
       }
   }
+}
+
+pub fn filename_to_exif(path: &Path) {
+    // TODO: Implement the logic to extract date from filename and update EXIF data
+    println!("Processing file: {:?} (filename to EXIF)", path);
 }

@@ -1,11 +1,12 @@
 [package]
 name = "exif_renamer"
 authors = ["Francesco Pira (pirafrank)"]
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
-#repository = "https://github.com/pirafrank/ducks"
+repository = "https://github.com/pirafrank/rust_exif_renamer"
 
 [dependencies]
 chrono = "0.4"
 kamadak-exif = "0.5.5"
 rayon = "1.7.0"
+clap = { version = "4.4", features = ["derive"] }
