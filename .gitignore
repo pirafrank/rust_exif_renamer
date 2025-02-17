@@ -22,3 +22,6 @@ target/
 **/*.rs.bk
 **/*.rs.orig
 **/*.rs.patch
+
+# test assets
+test_assets
