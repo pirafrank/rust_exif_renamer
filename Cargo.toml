@@ -4,6 +4,12 @@ authors = ["Francesco Pira (pirafrank)"]
 version = "0.2.0"
 edition = "2021"
 repository = "https://github.com/pirafrank/rust_exif_renamer"
+description = "Rename photos in given directory to their EXIF DateTimeOriginal, and viceversa. Defaults to YYYYMMDD_hh24mmss format."
+license = "MIT"
+readme = "README.md"
+keywords = ["exif", "rename", "cli", "photos"]
+categories = ["cli"]
+exclude = ["test_assets/*", "/.vscode/*", "/.github/*"]
 
 [dependencies]
 chrono = "0.4"
