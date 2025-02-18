@@ -43,33 +43,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let files = fs::read_dir(directory)?;
     let pattern = cli.pattern.unwrap_or_else(|| DEFAULT_PATTERN.to_string());
 
+    let process_files = |process_fn: fn(&Path, &str)| {
+        files.par_bridge().for_each(|file| {
+            if let Ok(entry) = file {
+                let path = entry.path();
+                if let Some(extension) = path.extension() {
+                    if extension == "jpg" || extension == "jpeg" {
+                        println!("Processing: {}", entry.path().display());
+                        process_fn(&path, &pattern);
+                    }
+                }
+            }
+        });
+    };
+
     match cli.command {
-        Command::ExifToFilename => {
-            files.par_bridge().for_each(|file| {
-                if let Ok(entry) = file {
-                    let path = entry.path();
-                    if let Some(extension) = path.extension() {
-                        if extension == "jpg" || extension == "jpeg" {
-                            println!("Processing: {}", entry.path().display());
-                            exif::exif_to_filename(&path, &pattern, &extension)
-                        }
-                    }
-                }
-            });
-        }
-        Command::FilenameToExif => {
-            files.par_bridge().for_each(|file| {
-                if let Ok(entry) = file {
-                    let path = entry.path();
-                    if let Some(extension) = path.extension() {
-                        if extension == "jpg" || extension == "jpeg" {
-                            println!("Processing: {}", entry.path().display());
-                            exif::filename_to_exif(&path, &pattern)
-                        }
-                    }
-                }
-            });
-        }
+        Command::ExifToFilename => process_files(
+            |path: &Path, pattern: &str| exif::exif_to_filename(path, pattern, path.extension().unwrap())
+        ),
+        Command::FilenameToExif => process_files(
+            |path: &Path, pattern: &str| exif::filename_to_exif(path, pattern)
+        ),
     }
 
     Ok(())

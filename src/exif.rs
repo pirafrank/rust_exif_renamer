@@ -38,7 +38,6 @@ pub fn exif_to_filename(path: &Path, pattern: &str, extension: &OsStr) {
       let mut bufreader = std::io::BufReader::new(&filex);
       let exifreader = exif::Reader::new();
       if let Ok(exif) = exifreader.read_from_container(&mut bufreader) {
-          println!("filename: {}", path.display());
           for f in exif.fields() {
               if f.tag.to_string().to_lowercase().starts_with("datetimeoriginal") {
                   let date_string = f.display_value().to_string();
