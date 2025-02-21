@@ -9,7 +9,7 @@ mod exif_error;
 const DEFAULT_PATTERN: &str = "%Y%m%d_%H%M%S";
 
 #[derive(Clone, ValueEnum)]
-enum Command {
+enum Cmd {
     /// Rename files based on EXIF data
     ExifToFilename,
     /// Update EXIF data based on filename
@@ -20,7 +20,7 @@ enum Command {
 #[command(author, version, about, long_about = None)]
 struct Cli {
     /// Command to execute
-    command: Command,
+    command: Cmd,
 
     /// Directory containing the images to process
     #[arg(short = 'p', long, required = true)]
@@ -58,10 +58,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     match cli.command {
-        Command::ExifToFilename => process_files(
+        Cmd::ExifToFilename => process_files(
             |path: &Path, pattern: &str| exif::exif_to_filename(path, pattern, path.extension().unwrap())
         ),
-        Command::FilenameToExif => process_files(
+        Cmd::FilenameToExif => process_files(
             |path: &Path, pattern: &str| exif::filename_to_exif(path, pattern)
         ),
     }
