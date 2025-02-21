@@ -26,7 +26,7 @@ struct Cli {
     #[arg(short = 'p', long, required = true)]
     path: String,
 
-    /// Date format pattern (only used with exif-to-filename)
+    /// Date format pattern to parse from or set to filename
     #[arg(short = 'P', long, default_value = DEFAULT_PATTERN)]
     pattern: Option<String>,
 }
@@ -36,7 +36,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let directory = Path::new(&cli.path);
 
     if !directory.is_dir() {
-        println!("Invalid directory path");
+        println!("Error: Invalid directory path");
         return Ok(());
     }
 

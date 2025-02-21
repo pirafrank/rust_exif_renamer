@@ -32,7 +32,7 @@ Options:
           Directory containing the images to process
 
   -P, --pattern <PATTERN>
-          Date format pattern (only used with exif-to-filename)
+          Date format pattern to parse from or set to filename
 
           [default: %Y%m%d_%H%M%S]
 
