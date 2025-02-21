@@ -1,5 +1,13 @@
 # Rust EXIF Renamer
 
+[![GitHub Release](https://img.shields.io/github/v/release/pirafrank/rust_exif_renamer)](https://github.com/pirafrank/rust_exif_renamer/releases/latest)
+[![Crates.io](https://img.shields.io/crates/v/rust_exif_renamer)](https://crates.io/crates/rust_exif_renamer)
+[![Crates.io MSRV](https://img.shields.io/crates/msrv/rust_exif_renamer)](https://github.com/pirafrank/rust_exif_renamer/blob/main/Cargo.toml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+[![CI-CD](https://github.com/pirafrank/rust_exif_renamer/actions/workflows/ci.yml/badge.svg)](https://github.com/pirafrank/rust_exif_renamer/actions/workflows/ci.yml)
+[![Release](https://github.com/pirafrank/rust_exif_renamer/actions/workflows/release.yml/badge.svg)](https://github.com/pirafrank/rust_exif_renamer/actions/workflows/release.yml)
+
 A simple cross-platform photo renamer and data editor. It renames JPEG files based on the `DateTimeOriginal` in their EXIF metadata, and viceversa.
 
 It processes in parallel all files in the given folder. If anything fails, it prints an error message and continues with the next file.
