@@ -7,6 +7,7 @@ repository = "https://github.com/pirafrank/rust_exif_renamer"
 description = "Rename photos in given directory to their EXIF DateTimeOriginal, and viceversa. Defaults to YYYYMMDD_hh24mmss format."
 license = "MIT"
 readme = "README.md"
+build = "build.rs"
 keywords = ["exif", "rename", "cli", "photos"]
 categories = ["cli"]
 exclude = ["test_assets/*", "/.vscode/*", "/.github/*"]
@@ -17,3 +18,6 @@ kamadak-exif = "0.5.5"
 rayon = "1.7.0"
 clap = { version = "4.4", features = ["derive"] }
 little_exif = "0.6.3"
+
+[build-dependencies]
+chrono = "0.4"
