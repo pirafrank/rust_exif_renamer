@@ -1,7 +1,9 @@
 use clap::{Parser, ValueEnum};
-use std::path::Path;
-use rayon::prelude::*;
 use std::fs;
+use std::io;
+use std::{path::Path, path::PathBuf};
+use std::sync::{Arc, Mutex};
+use rayon::prelude::*;
 
 mod exif;
 mod exif_error;
@@ -26,6 +28,7 @@ fn long_version() -> &'static str {
 
 // Constants
 
+const SUPPORTED_EXTENSIONS: [&str; 2] = ["jpg", "jpeg"];
 const DEFAULT_PATTERN: &str = "%Y%m%d_%H%M%S";
 
 // Command line interface
@@ -69,20 +72,35 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Ok(());
     }
 
-    let files = fs::read_dir(directory)?;
-    let pattern = cli.pattern.unwrap_or_else(|| DEFAULT_PATTERN.to_string());
+    let files: Vec<_> = fs::read_dir(directory)?
+        .filter_map(|entry: Result<fs::DirEntry, io::Error>| {
+            let entry: fs::DirEntry = entry.ok()?;
+            // let entry.path live long enough to be used
+            let binding: PathBuf = entry.path();
+            let file_ext: &str = binding.extension()?.to_str()?;
+            // go lowercase for case-insensitive comparison
+            if SUPPORTED_EXTENSIONS.contains(&file_ext.to_lowercase().as_str()) {
+                Some(entry)
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    let total: usize = files.len();
+    let pattern: String = cli.pattern.unwrap_or_else(|| DEFAULT_PATTERN.to_string());
+    let mutex: Arc<Mutex<i32>> = Arc::new(Mutex::new(0));
 
     let process_files = |process_fn: fn(&Path, &str)| {
-        files.par_bridge().for_each(|file| {
-            if let Ok(entry) = file {
-                let path = entry.path();
-                if let Some(extension) = path.extension() {
-                    if extension == "jpg" || extension == "jpeg" {
-                        println!("Processing: {}", entry.path().display());
-                        process_fn(&path, &pattern);
-                    }
-                }
-            }
+        files.into_par_iter().for_each(|file: fs::DirEntry| {
+            // Update the progress
+            let mut progress = mutex.lock().unwrap();
+            *progress += 1;
+            println!("\nProcessing: {}/{}\n", *progress, total);
+            // Process file
+            let path: PathBuf = file.path();
+            println!("Processing file: {}", file.path().display());
+            process_fn(&path, &pattern);
         });
     };
 

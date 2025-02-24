@@ -41,16 +41,14 @@ pub fn exif_to_filename(path: &Path, pattern: &str, extension: &OsStr) {
           for f in exif.fields() {
               if f.tag.to_string().to_lowercase().starts_with("datetimeoriginal") {
                   let date_string = f.display_value().to_string();
-                  println!("{}: {}",
-                      f.tag, date_string);
+                  println!("{}: {}", f.tag, date_string);
                   let current_date = create_datetime_from_string(&date_string);
                   let formatted_date = format_date(current_date.unwrap(), pattern);
-                  println!("Formatted date: {}", formatted_date);
+                  println!("Set date {} to file {}", formatted_date, path.display());
                   rename_file(&formatted_date, &path, &extension);
                   continue;
               }
           }
-          println!("");
       }
   }
 }
@@ -72,11 +70,11 @@ fn process_exif(path: &Path, pattern: &str) -> Result<(), ExifError> {
         .ok_or_else(|| ExifError::DateParseError("Invalid filename".to_string()))?;
 
     let date_time = create_datetime_from_pattern(&stem, pattern)
-        .ok_or_else(|| ExifError::DateParseError(format!("Invalid date format in: {}", stem)))?;
+        .ok_or_else(|| ExifError::DateParseError(format!("Invalid date format {}", stem)))?;
 
     let formatted_date = date_time.format(&format).to_string();
-    println!("Formatted date {}, from filename: {}", formatted_date, stem);
-    
+    println!("Found date {} in filename {}", formatted_date, stem);
+
     let mut metadata = Metadata::new_from_path(&path)
         .map_err(|e| ExifError::ExifError(exif::Error::Io(e)))?;
 
@@ -85,6 +83,6 @@ fn process_exif(path: &Path, pattern: &str) -> Result<(), ExifError> {
     metadata.write_to_file(&path)
         .map_err(|e| ExifError::ExifError(exif::Error::Io(e)))?;
 
-    println!("Updated EXIF data for file {}", path.display());
+    println!("Updated EXIF data in file {}", path.display());
     Ok(())
 }

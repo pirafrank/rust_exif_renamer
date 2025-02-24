@@ -22,6 +22,12 @@ test:
 help:
     cargo run -- --help
 
+V:
+    cargo run -- -V
+
+version:
+    cargo run -- --version
+
 # Rename files based on EXIF data
 exif:
     cargo run -- exif-to-filename --path test_assets/exif-to-name
