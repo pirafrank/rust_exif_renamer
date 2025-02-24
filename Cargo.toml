@@ -1,7 +1,7 @@
 [package]
 name = "exif_renamer"
 authors = ["Francesco Pira (pirafrank)"]
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 repository = "https://github.com/pirafrank/rust_exif_renamer"
 documentation = "https://github.com/pirafrank/rust_exif_renamer/blob/main/README.md"
