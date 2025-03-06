@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] - 2025-02-24
+
+### 🚀 Features
+
+- Show progress, have more readable output
+
+### ⚙️ Miscellaneous Tasks
+
+- Update git cliff and set explicit publish option
+
 ## [0.2.1] - 2025-02-22
 
 ### 🚀 Features
